@@ -20,11 +20,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'password required'],
       minLength: [6, 'password must be more the 6 charactars'],
-      maxLength: [23, 'password must not exceed 23 charactars'],
+      // maxLength: [50, 'password must not exceed 23 charactars'],
     },
     photo: {
       type: String,
-      required: [true, 'please add a photo'],
+      required: [false, 'please add a photo'],
       default: 'https://ibb.co/tMVd1nt',
     },
     phone: {
