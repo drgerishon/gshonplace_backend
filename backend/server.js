@@ -6,6 +6,15 @@ const cors = require('cors')
 
 const app = express()
 
+//middlesware
+app.use(express.json())
+app.use(express.urlencoded({extended: false}))
+app.use(bodyParser.json())
+
+app.get("/", (req, res) => {
+    res.send("route testing")
+})
+
 const PORT = process.env.PORT || 5000
 
 mongoose.connect(process.env.MONGODB_URI, {
