@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react';
 import styles from '../../styles/Header.module.scss';
 import { FaShoppingCart, FaTimes } from 'react-icons/fa';
 import { HiOutlineMenuAlt3 } from 'react-icons/hi';
+import { useDispatch } from 'react-redux';
 
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { RESET_AUTH, logout } from '../../redux/features/auth/authSlice';
+import ShowOnLogin, { ShowOnLogout } from '../hiddenLink/huddenLink';
 
 export const logo = (
   <div className={styles.logo}>
@@ -21,6 +24,9 @@ const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [scrollPage, setScrollPage] = useState(false);
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const toggleMenu = () => {
     setShowMenu(!showMenu);
   };
@@ -29,6 +35,11 @@ const Header = () => {
     setShowMenu(false);
   };
 
+  const logoutUser = async () => {
+    await dispatch(logout());
+    await dispatch(RESET_AUTH());
+    navigate('/login');
+  };
   const cart = (
     <span className={styles.cart}>
       <Link to="/cart">
@@ -62,15 +73,18 @@ const Header = () => {
             showMenu ? `${styles['show-nav']}` : `${styles['hide-nav']}`
           }
         >
-          <div className={
-            showMenu ? `${styles['nav-wrapper']} ${styles['show-nav-wrapper']}` : `${styles['nav-wrapper']}`
-          } onClick={hideMenu}>
-
-          </div>
+          <div
+            className={
+              showMenu
+                ? `${styles['nav-wrapper']} ${styles['show-nav-wrapper']}`
+                : `${styles['nav-wrapper']}`
+            }
+            onClick={hideMenu}
+          ></div>
           <ul>
             <li className={styles['logo-mobile']}>
-                {logo}
-                <FaTimes size={22} color='#fff' onClick={hideMenu}/>
+              {logo}
+              <FaTimes size={22} color="#fff" onClick={hideMenu} />
             </li>
             <li>
               <NavLink to={'/shop'} className={activeLink}>
@@ -80,26 +94,36 @@ const Header = () => {
           </ul>
           <div className={styles['header-right']}>
             <span className={styles.links}>
-              <NavLink to="login" className={activeLink}>
-                Login
-              </NavLink>
-
-              <NavLink to="register" className={activeLink}>
-                Register
-              </NavLink>
-
-              <NavLink to="order-history" className={activeLink}>
-                Order
-              </NavLink>
+              <ShowOnLogout>
+                <NavLink to="login" className={activeLink}>
+                  Login
+                </NavLink>
+              </ShowOnLogout>
+              <ShowOnLogout>
+                <NavLink to="register" className={activeLink}>
+                  Register
+                </NavLink>
+              </ShowOnLogout>
+             
+              <ShowOnLogin>
+                <NavLink to="order-history" className={activeLink}>
+                  Order
+                </NavLink>
+              </ShowOnLogin>
+              <ShowOnLogin>
+                <Link to="/" onClick={logoutUser}>
+                  Logout
+                </Link>
+              </ShowOnLogin>
             </span>
             {cart}
           </div>
         </nav>
 
         {/* menu icons */}
-        <div className={styles['menu-icon']} >
+        <div className={styles['menu-icon']}>
           {cart}
-          <HiOutlineMenuAlt3 size={25} onClick={toggleMenu}/>
+          <HiOutlineMenuAlt3 size={25} onClick={toggleMenu} />
         </div>
       </div>
     </header>

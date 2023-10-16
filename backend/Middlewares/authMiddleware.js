@@ -7,24 +7,29 @@ const protect = asyncHandler(async (req, res, next) => {
     const token = req.cookies.token;
     if (!token) {
       res.status(401);
-      throw new Error('Not authorized, please login');
+      throw new Error('Not authorized, no token');
     }
-    //verify token
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    //GET user id from token
+
+    let verified;
+    try {
+      verified = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      res.status(401);
+      throw new Error('Not authorized, token failed');
+    }
+
     const user = await User.findById(verified.id).select('-password');
-    if(!user) {
-        res.status(401);
-        throw new Error('User not found');
+    if (!user) {
+      res.status(401);
+      throw new Error('User not found');
     }
-    req.user = user
 
-    next()
-
-} catch (error) {
+    req.user = user;
+    next();
+  } catch (error) {
     res.status(401);
-    throw new Error('User not authorized. please login');
-}
+    throw new Error('Not authorized, please login');
+  }
 });
 
 module.exports = protect;

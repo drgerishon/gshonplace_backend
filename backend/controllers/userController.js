@@ -55,13 +55,14 @@ const registerUser = async (req, res) => {
       res.status(200).json({
         status: 'User created',
         data: {
-          _id,
+          _id: user._id,
           name,
           email,
           token,
         },
       });
     }
+    
   } catch (error) {
     res.status(400).json({
       status: 'Failed to create a user',
@@ -325,6 +326,15 @@ const resetpassword = async (req, res) => {
    )
 
 }
+//upadate photo
+const updatePhoto = async (req, res) => {
+  const { photo } = req.body
+
+  const user = await User.findById(req.user._id)
+  user.photo = photo
+  const updatedUser = await user.save()
+  res.status(200).json(updatedUser) //sern user to frontend
+}
 module.exports = {
   registerUser,
   loginUser,
@@ -334,5 +344,6 @@ module.exports = {
   updateUser,
   changePassword,
   forgetPassword,
-  resetpassword
+  resetpassword,
+  updatePhoto
 };
