@@ -86,10 +86,9 @@ export const getUser = createAsyncThunk('auth/getUser', async (_, thunkAPI) => {
 });
 
 //updateUser
-
-export const updateUser = createAsyncThunk('auth/updateUser', async (userData, thunkAPI) => {
+export const updateUser = createAsyncThunk('auth/updateUser', async ({userData, userId}, thunkAPI) => {
   try {
-    return await authService.updateUser(userData);
+    return await authService.updateUser(userData, userId);
   } catch (error) {
     const message =
       (error.response && error.response.data && error.response.data.message) ||
@@ -211,7 +210,7 @@ const authSlice = createSlice({
           state.isSuccess = true;
           state.isLoggedIn = true;
           state.user = action.payload;
-          toast.success('Getting uer Successful');
+          toast.success('Getting user Successful');
         })
         .addCase(getUser.rejected, (state, action) => {
           state.isLoading = false;

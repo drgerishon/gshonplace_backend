@@ -39,8 +39,9 @@ const getUser = async() => {
 
 
 // update profile
-const updateUser = async(userData) => {
-    const response = await axios.patch(API_URL + "update", userData)
+// update profile
+const updateUser = async(userData, userId) => {
+    const response = await axios.patch(`${API_URL}update/${userId}`, userData)
     return response.data
 }
 

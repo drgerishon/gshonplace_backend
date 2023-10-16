@@ -26,11 +26,25 @@ const userSchema = new mongoose.Schema(
     photo: {
       type: String,
       required: [false, 'please add a photo'],
-      default: 'https://ibb.co/tMVd1nt',
+      default: 'https://res.cloudinary.com/dlionndxl/image/upload/v1682920675/avatar_wru8b1.avif',
+    },
+    role: {
+      type: String,
+      require: [true],
+      default: "customer",
+      enum: ["customer", "admin"]
     },
     phone: {
       type: String,
       default: '+254',
+    },
+    address: {
+      type: Object,
+      default: {
+        address: '01101',
+        state: 'Nairobi',
+        country: 'Kenya',
+      },
     },
 
     bio: {
@@ -53,7 +67,7 @@ userSchema.pre('save', async function (next) {
   const hashedPassword = await bcrypt.hash(this.password, salt);
   this.password = hashedPassword;
 
-  next()
+  next();
 });
 
 const User = mongoose.model('User', userSchema);

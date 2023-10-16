@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { validateEmail } from '../../utils';
 import Loader from '../../components/loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
-import { RESET_AUTH, login } from '../../redux/features/auth/authSlice';
+import { RESET_AUTH, getUser, login } from '../../redux/features/auth/authSlice';
 
 
 export const Login = () => {
@@ -34,9 +34,10 @@ export const Login = () => {
   };
 useEffect(() => {
   if(isLoggedIn && isSuccess) {
+    dispatch(getUser()); 
     navigate('/')
   }
-  dispatch(RESET_AUTH())
+  // dispatch(RESET_AUTH())
 }, [dispatch, isLoggedIn, isSuccess, navigate])
 
   return (

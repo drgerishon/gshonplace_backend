@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import styles from '../../styles/Header.module.scss';
-import { FaShoppingCart, FaTimes } from 'react-icons/fa';
+import { FaShoppingCart, FaTimes, FaUserCircle } from 'react-icons/fa';
 import { HiOutlineMenuAlt3 } from 'react-icons/hi';
 import { useDispatch } from 'react-redux';
 
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { RESET_AUTH, logout } from '../../redux/features/auth/authSlice';
 import ShowOnLogin, { ShowOnLogout } from '../hiddenLink/huddenLink';
+import { Username } from '../../pages/profile/Profile';
 
 export const logo = (
   <div className={styles.logo}>
@@ -94,6 +95,13 @@ const Header = () => {
           </ul>
           <div className={styles['header-right']}>
             <span className={styles.links}>
+            <ShowOnLogin>
+                <NavLink to={"profile"} className={activeLink}>
+                  <FaUserCircle size={16} color="#ff7722" />
+                  <Username />
+                </NavLink>
+              </ShowOnLogin>
+
               <ShowOnLogout>
                 <NavLink to="login" className={activeLink}>
                   Login

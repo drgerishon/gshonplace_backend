@@ -141,11 +141,22 @@ const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
+   if(user) {
+    const {_id, name, email, photo,role, phone,address, bio} = user;
     res.status(200).json({
-      data: {
-        user,
-      },
-    });
+      _id,
+      name,
+      email,
+      photo,
+      role,
+      phone,
+      address,
+      bio
+    })
+   }else{
+ res.status(400)
+ throw new Error('User not Found')
+   }
   } catch (error) {
     res.status(500);
     throw new Error('error occured');
@@ -166,30 +177,32 @@ const loginStatus = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const user = await User.findById(req.user._id);
+  try {
+    const user = await User.findById(req.user._id);
 
-  if (user) {
-    const { name, email, photo, phone, bio } = user;
+    if (user) {
+      const { name, phone, address } = req.body;
 
-    user.name = req.body.name || name;
-    user.email = email;
-    user.photo = req.body.photo || photo;
-    user.phone = req.body.phone || phone;
-    user.bio = req.body.bio || bio;
+      user.name = name || user.name;
+      user.phone = phone || user.phone;
+      user.address = address || user.address;
 
-    const updatedUser = await user.save();
+      const updatedUser = await user.save();
 
-    res.status(200).json({
-      status: 'user updated successfully',
-      name: updatedUser.name,
-      email: updatedUser.email,
-      photo: updatedUser.photo,
-      phone: updatedUser.phone,
-      bio: updatedUser.bio,
-    });
-  } else {
-    res.status(404);
-    throw new Error('user not found');
+      return res.status(200).json({
+        status: 'user updated successfully',
+        name: updatedUser.name,
+        photo: updatedUser.photo,
+        phone: updatedUser.phone,
+        address: updatedUser.address,
+        bio: updatedUser.bio,
+      });
+    } else {
+      res.status(404);
+      throw new Error('user not found');
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
 };
 
