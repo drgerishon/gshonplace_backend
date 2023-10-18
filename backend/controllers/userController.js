@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const Token = require('../models/tokenModel');
 const crypto = require('crypto');
-const sendMail = require('../utils/sendMail')
+const sendMail = require('../utils/sendMail');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -62,7 +62,6 @@ const registerUser = async (req, res) => {
         },
       });
     }
-    
   } catch (error) {
     res.status(400).json({
       status: 'Failed to create a user',
@@ -141,22 +140,22 @@ const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
-   if(user) {
-    const {_id, name, email, photo,role, phone,address, bio} = user;
-    res.status(200).json({
-      _id,
-      name,
-      email,
-      photo,
-      role,
-      phone,
-      address,
-      bio
-    })
-   }else{
- res.status(400)
- throw new Error('User not Found')
-   }
+    if (user) {
+      const { _id, name, email, photo, role, phone, address, bio } = user;
+      res.status(200).json({
+        _id,
+        name,
+        email,
+        photo,
+        role,
+        phone,
+        address,
+        bio,
+      });
+    } else {
+      res.status(400);
+      throw new Error('User not Found');
+    }
   } catch (error) {
     res.status(500);
     throw new Error('error occured');
@@ -167,13 +166,20 @@ const loginStatus = async (req, res) => {
   if (!token) {
     return res.json(false);
   }
-  //it it exists then verify
-  const verified = jwt.verify(token, process.env.JWT_SECRET);
+  //if it exists then verify
+  try {
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
 
-  if (verified) {
-    return res.json(true);
+    if (verified) {
+      return res.json(true);
+    }
+    return res.json(false);
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({ message: 'Token has expired' });
+    }
+    return res.status(401).json({ message: 'Invalid token' });
   }
-  return res.json(false);
 };
 
 const updateUser = async (req, res) => {
@@ -255,9 +261,9 @@ const forgetPassword = async (req, res) => {
 
   //delete token if already exists and create a fresh one
 
-  let token = await Token.findOne({userId: user._id})
-  if(token) {
-    await token.deleteOne()
+  let token = await Token.findOne({ userId: user._id });
+  if (token) {
+    await token.deleteOne();
   }
 
   //create token
@@ -309,45 +315,45 @@ const forgetPassword = async (req, res) => {
 };
 
 const resetpassword = async (req, res) => {
-  const { password} = req.body
-  const {resetToken} = req.params
+  const { password } = req.body;
+  const { resetToken } = req.params;
 
   //hash token then compare to one in the database
   const hashedToken = crypto
-  .createHash('sha256')
-  .update(resetToken).digest('hex')
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
 
   //find token in db
   const userToken = await Token.findOne({
     token: hashedToken,
-    expiresAt: {$gt: Date.now()} //if expired
-   })
+    expiresAt: { $gt: Date.now() }, //if expired
+  });
 
-   if(!userToken) {
-    res.status(404)
-    throw new Error("invalid or expired Token")
-   }
+  if (!userToken) {
+    res.status(404);
+    throw new Error('invalid or expired Token');
+  }
 
-   //find user
+  //find user
 
-   const user = await User.findOne({_id: userToken.userId})
-   user.password = password
-   await user.save(
+  const user = await User.findOne({ _id: userToken.userId });
+  user.password = password;
+  await user.save(
     res.status(200).json({
-      message: "passord reset successful. please login"
+      message: 'passord reset successful. please login',
     })
-   )
-
-}
+  );
+};
 //upadate photo
 const updatePhoto = async (req, res) => {
-  const { photo } = req.body
+  const { photo } = req.body;
 
-  const user = await User.findById(req.user._id)
-  user.photo = photo
-  const updatedUser = await user.save()
-  res.status(200).json(updatedUser) //sern user to frontend
-}
+  const user = await User.findById(req.user._id);
+  user.photo = photo;
+  const updatedUser = await user.save();
+  res.status(200).json(updatedUser); //sern user to frontend
+};
 module.exports = {
   registerUser,
   loginUser,
@@ -358,5 +364,5 @@ module.exports = {
   changePassword,
   forgetPassword,
   resetpassword,
-  updatePhoto
+  updatePhoto,
 };

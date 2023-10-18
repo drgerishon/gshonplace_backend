@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { loginStatus } from './redux/features/auth/authSlice';
 import Profile from './pages/profile/Profile';
+import Reset from './pages/auth/Reset';
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -30,6 +31,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/reset" element={<Reset />} />
+
         </Routes>
 
         <Footer />

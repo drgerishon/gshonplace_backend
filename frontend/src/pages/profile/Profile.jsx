@@ -7,6 +7,7 @@ import { getUser, updatePhoto, updateUser } from '../../redux/features/auth/auth
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { toast } from 'react-toastify';
 import { shortenText } from '../../utils';
+import Loader from '../../components/loader/Loader';
 
 const Profile = () => {
   const { isLoading, user } = useSelector((state) => state.auth);
@@ -29,7 +30,6 @@ const Profile = () => {
   const [profileImage, setProfileImage] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
 
-  
   
   useEffect(() => {
     if(user == null) {
@@ -137,6 +137,7 @@ const upload_preset =  import.meta.env.VITE_APP_UPLOAD_PRESET
   return (
     <>
       <section>
+        {isLoading && <Loader />}
         <div className="container">
           <PageMenu />
           <h2>Profile</h2>

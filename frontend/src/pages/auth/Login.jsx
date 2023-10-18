@@ -7,7 +7,12 @@ import { toast } from 'react-toastify';
 import { validateEmail } from '../../utils';
 import Loader from '../../components/loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
-import { RESET_AUTH, getUser, login } from '../../redux/features/auth/authSlice';
+import { getUser, login } from '../../redux/features/auth/authSlice';
+import { FaGoogle } from 'react-icons/fa'
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from '../../firebaseConfig';
+
+// Now you can use `auth` in this file
 
 
 export const Login = () => {
@@ -40,6 +45,26 @@ useEffect(() => {
   // dispatch(RESET_AUTH())
 }, [dispatch, isLoggedIn, isSuccess, navigate])
 
+//Login with google
+
+const provider = new GoogleAuthProvider();
+const signInWithGoogle = () => {
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      if (result && result.user) {
+        const user = result.user;
+        toast.success("Login successful");
+        navigate('/');
+        // You can now safely use 'user' object
+      } else {
+        toast.error("User information could not be retrieved");
+      }
+    })
+    .catch((error) => {
+      toast.error(error.message);
+    });
+};
+
   return (
     <>
     {isLoading && <Loader />}
@@ -67,7 +92,14 @@ useEffect(() => {
               onChange={(e) => setPassword(e.target.value)}
             />
             <button className="--btn --btn-primary --btn-block">Login</button>
+         <div className={styles.links}>
+          <Link to="/reset" >Reset Password</Link>
+         </div>
+         <p>--or--</p>
           </form>
+          <button className='--btn --btn-danger --btn-block' onClick={signInWithGoogle}>
+            <FaGoogle color="#fff" /> Login with Google
+          </button>
           <span className={styles.register}>
             <p>Dont have an account?</p>
             <Link to="/register">Register</Link>

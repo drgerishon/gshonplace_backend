@@ -4,6 +4,8 @@ const dotenv = require('dotenv').config();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoute');
+const productRoute = require('./routes/productRoute');
+
 const cookieParser = require('cookie-parser');
 
 const app = express();
@@ -26,6 +28,8 @@ app.get('/', (req, res) => {
 //route middleware
 
 app.use('/api/users', userRoutes);
+app.use('/api/products', productRoute);
+
 
 const PORT = process.env.PORT || 5000;
 
