@@ -2,63 +2,69 @@ import { useState } from 'react';
 import Card from '../../components/card/Card';
 import styles from '../../styles/auth.module.scss';
 import { Link } from 'react-router-dom';
-import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from '../../firebaseConfig';
 import { toast } from 'react-toastify';
 import Loader from '../../components/loader/Loader';
+import { useDispatch } from 'react-redux';
+import { forgetPassword } from '../../redux/features/auth/authSlice';
 
 const Reset = () => {
-  const [email, setEmail] = useState("");
-  const [isLoading,setIsLoading] = useState(false)
+  const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
-  const resetPassword = (e) => {
-    e.preventDefault(); // Prevent default form submission
-setIsLoading(true)
+  const resetPasswordAuth = (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+  
     if (!email) {
-      return toast.error("Email field is required");
+      setIsLoading(false);
+      return toast.error('Email field is required');
     }
-
-    sendPasswordResetEmail(auth, email)
-      .then(() => {
-        setIsLoading(false)
-        toast.success("Check your email for reset link");
+  
+    // Dispatch the action
+    dispatch(forgetPassword({ email }))
+      .unwrap()
+      .then((message) => {
+        setIsLoading(false);
+        toast.success(message);
       })
       .catch((error) => {
-        setIsLoading(false)
-        toast.error(error.message);
+        setIsLoading(false);
+        toast.error(error);
       });
   };
-
+  
   return (
     <>
-    {isLoading && <Loader />}
-    <section className={`container ${styles.auth}`}>
-      <div className={styles.img}></div>
-      <Card>
-        <div className={styles.form}>
-          <h2>Reset Password</h2>
-          <form onSubmit={resetPassword}>
-            <input
-              type="text"
-              placeholder="Email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-
-            <button type='submit' className="--btn --btn-primary">Reset password</button>
-            <div className={styles.links}>
-              <p>
-                <Link to="/login">- Login</Link>
-              </p>
-              <p>
-                <Link to="/register">- Register</Link>
-              </p>
-            </div>
-          </form>
-        </div>
-      </Card>
-    </section>
+      {isLoading && <Loader />}
+      <section className={`container ${styles.auth}`}>
+        <div className={styles.img}></div>
+        <Card>
+          <div className={styles.form}>
+            <h2>Reset Password</h2>
+            <form onSubmit={resetPasswordAuth}>
+              <input
+                type="text"
+                placeholder="Email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <button type="submit" className="--btn --btn-primary">
+                Reset password
+              </button>
+              <div className={styles.links}>
+                <p>
+                  <Link to="/login">- Login</Link>
+                </p>
+                <p>
+                  <Link to="/register">- Register</Link>
+                </p>
+              </div>
+            </form>
+          </div>
+        </Card>
+      </section>
     </>
   );
 };

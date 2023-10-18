@@ -354,6 +354,21 @@ const updatePhoto = async (req, res) => {
   const updatedUser = await user.save();
   res.status(200).json(updatedUser); //sern user to frontend
 };
+
+//check email
+const checkEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (user) {
+      return res.status(200).json({ exists: true });
+    } else {
+      return res.status(200).json({ exists: false });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: 'An error occurred', error: error.message });
+  }
+};
 module.exports = {
   registerUser,
   loginUser,
@@ -365,4 +380,5 @@ module.exports = {
   forgetPassword,
   resetpassword,
   updatePhoto,
+  checkEmail
 };

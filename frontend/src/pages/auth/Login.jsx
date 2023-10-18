@@ -7,10 +7,8 @@ import { toast } from 'react-toastify';
 import { validateEmail } from '../../utils';
 import Loader from '../../components/loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUser, login } from '../../redux/features/auth/authSlice';
+import { getUser, googleSignIn, login } from '../../redux/features/auth/authSlice';
 import { FaGoogle } from 'react-icons/fa'
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from '../../firebaseConfig';
 
 // Now you can use `auth` in this file
 
@@ -47,23 +45,16 @@ useEffect(() => {
 
 //Login with google
 
-const provider = new GoogleAuthProvider();
 const signInWithGoogle = () => {
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      if (result && result.user) {
-        const user = result.user;
-        toast.success("Login successful");
+    dispatch(googleSignIn())
+      .then(() => {
         navigate('/');
-        // You can now safely use 'user' object
-      } else {
-        toast.error("User information could not be retrieved");
-      }
-    })
-    .catch((error) => {
-      toast.error(error.message);
-    });
-};
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  };
+
 
   return (
     <>

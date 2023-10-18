@@ -9,7 +9,8 @@ const {
   changePassword,
   forgetPassword,
   resetpassword,
-  updatePhoto
+  updatePhoto,
+  checkEmail
 
 } = require('../controllers/userController');
 const protect = require('../Middlewares/authMiddleware');
@@ -26,6 +27,7 @@ router.patch('/changepassword', protect, changePassword);
 router.post('/forgetPassword', forgetPassword);
 router.put('/resetpassword/:resetToken', resetpassword);
 router.patch('/updatephoto',protect, updatePhoto);
+router.post('/checkEmail', checkEmail);
 
 
 
