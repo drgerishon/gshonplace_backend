@@ -85,7 +85,10 @@ const loginUser = async (req, res) => {
     }
     //check password
     const passwordIsCorrect = await bcrypt.compare(password, user.password);
-
+    if (!passwordIsCorrect) {
+      res.status(400);
+      throw new Error('user not found. please sign up');
+    }
     //generate token
 
     const token = generateToken(user._id);

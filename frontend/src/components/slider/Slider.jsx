@@ -52,7 +52,7 @@ const Slider = () => {
                                 <span className="span3"></span>
                                 <span className="span4"></span>
 
-                                <h>{heading}</h>
+                                <p>{heading}</p>
                                 <p>{desc}</p>
                                 <hr />
                                 <button className='--btn --btn-primary' onClick={() => navigate('/shop')}>Shop Now</button>

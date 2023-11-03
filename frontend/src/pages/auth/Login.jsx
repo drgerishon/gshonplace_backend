@@ -20,6 +20,7 @@ export const Login = () => {
  const navigate = useNavigate()
   const { isLoading, isLoggedIn, isSuccess} = useSelector((state) => state.auth)
 
+
   const loginUser = async(e) => {
     e.preventDefault();
     if(!email || !password) {
@@ -37,16 +38,16 @@ export const Login = () => {
   };
 useEffect(() => {
   if(isLoggedIn && isSuccess) {
-    dispatch(getUser()); 
     navigate('/')
+    dispatch(getUser()); 
   }
   // dispatch(RESET_AUTH())
 }, [dispatch, isLoggedIn, isSuccess, navigate])
 
 //Login with google
 
-const signInWithGoogle = () => {
-    dispatch(googleSignIn())
+const signInWithGoogle = async() => {
+    await dispatch(googleSignIn())
       .then(() => {
         navigate('/');
       })

@@ -60,8 +60,9 @@ export const googleSignIn = createAsyncThunk(
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       if (result && result.user) {
-        const user = result.user;
-        return user; // Return user data
+        const { uid, email, displayName, photoURL } = result.user;
+        const serializableUser = { uid, email, displayName, photoURL };
+        return serializableUser; // Return only serializable user data
       } else {
         return thunkAPI.rejectWithValue(
           'User information could not be retrieved'
@@ -72,6 +73,7 @@ export const googleSignIn = createAsyncThunk(
     }
   }
 );
+
 
 //logout user
 export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
